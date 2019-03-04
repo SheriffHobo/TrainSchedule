@@ -1,0 +1,18 @@
+body {
+    background-image: url(../images/train.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.jumbotron {
+    background-image: url(../images/sign.jpg);
+    background-position: center;
+}
+
+#title {
+    font-size: 5rem;
+    background-color: #343a40;
+    border-radius: 5px;
+}
