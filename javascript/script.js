@@ -10,6 +10,14 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 
+function currentTime() {
+    var current = moment().format('HH:mm');
+    $(".time").text(current);
+    setTimeout(currentTime, 1000);
+  };
+
+  currentTime();
+
 $("#add-train-btn").on("click", function (event) {
     event.preventDefault();
 
@@ -19,6 +27,7 @@ $("#add-train-btn").on("click", function (event) {
     var frequency = $("#freqinput").val().trim();
 
     var newTrain = {
+        type: "train",
         train: train,
         destination: destination,
         time: time,
@@ -40,14 +49,12 @@ database.ref().on("child_added", function (childSnapshot) {
     var trainDest = childSnapshot.val().destination;
     var trainTime = childSnapshot.val().time;
     var trainFreq = childSnapshot.val().frequency;
+    var key = childSnapshot.key;
     // console.log("Frist Train Time from Child snapshot: " + trainTime);
     // console.log("Train Frequency from Child snapshot: " + trainFreq);
 
     var firstTimeConverted = moment(trainTime, "HH:mm").subtract(1, "years");
     // console.log("Firt Time Converted: " + firstTimeConverted);
-
-    var currentTime = moment();
-    // console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
     var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
     // console.log("DIFFERENCE IN TIME: " + diffTime);
@@ -65,10 +72,20 @@ database.ref().on("child_added", function (childSnapshot) {
         $("<td>").text(trainName),
         $("<td>").text(trainDest),
         $("<td>").text(trainFreq),
-        $("<td>").text(moment(nextArrival).format("HH:mm")),
-        $("<td>").text(tMinutesTillTrain)
+        $("<td>").text(moment(nextArrival).format("HH:mm")).attr("id", "reload"),
+        $("<td>").text(tMinutesTillTrain).attr("id", "reload"),
+        $("<td>").text("X").attr("data-value", key).attr("class", "delete btn btn-sm btn-outline-danger")
     );
 
     $("#schedtable").append(newRow);
 });
 
+$(document).on("click", ".delete", function() {
+    keyref = $(this).attr("data-value");
+    database.ref().child(keyref).remove();
+    location.reload();
+  });
+
+  setInterval(function() {
+    location.reload();
+  }, 60000);
