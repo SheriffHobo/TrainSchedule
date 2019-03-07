@@ -72,8 +72,8 @@ database.ref().on("child_added", function (childSnapshot) {
         $("<td>").text(trainName),
         $("<td>").text(trainDest),
         $("<td>").text(trainFreq),
-        $("<td>").text(moment(nextArrival).format("HH:mm")).attr("id", "reload"),
-        $("<td>").text(tMinutesTillTrain).attr("id", "reload"),
+        $("<td>").text(moment(nextArrival).format("HH:mm")),
+        $("<td>").text(tMinutesTillTrain),
         $("<td>").text("X").attr("data-value", key).attr("class", "delete btn btn-sm btn-outline-danger")
     );
 
@@ -87,5 +87,5 @@ $(document).on("click", ".delete", function() {
   });
 
   setInterval(function() {
-    location.reload();
+    tbody.reload();
   }, 60000);
