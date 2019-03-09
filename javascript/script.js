@@ -1,3 +1,4 @@
+// CALLING FIREBASE
 var config = {
   apiKey: "AIzaSyARoZlhBsxEOy5FG73z7V25UH4R3tpfr6I",
   authDomain: "trainschedulehomework-ddf3b.firebaseapp.com",
@@ -7,14 +8,18 @@ var config = {
   messagingSenderId: "892044864535"
 };
 firebase.initializeApp(config);
+
 var database = firebase.database();
 
+// DISPLAY CURRENT TIME
 function currentTime() {
   var current = moment().format('HH:mm');
   $(".time").text(current);
   setTimeout(currentTime, 1000);
 };
 
+
+// ADD TRAIN TO FIREBASE
 $("#add-train-btn").on("click", function (event) {
   event.preventDefault();
 
@@ -24,7 +29,6 @@ $("#add-train-btn").on("click", function (event) {
   var frequency = $("#freqinput").val().trim();
 
   var newTrain = {
-    type: "train",
     train: train,
     destination: destination,
     time: time,
@@ -33,16 +37,15 @@ $("#add-train-btn").on("click", function (event) {
 
   database.ref().push(newTrain);
 
-  $("#train").val("");
+  $("#traininput").val("");
   $("#destinput").val("");
-  $("#timeinout").val("");
+  $("#timeinput").val("");
   $("#freqinput").val("");
 });
 
+// PULLING TRAIN DETAILS FROM FRIREBASE & DISPLAY IN SCHEDULE TABLE
 function setPage() {
-  $("#schedtable").empty();
-
-  currentTime();
+  // $("#schedtable").empty();
 
   database.ref().on("child_added", function (childSnapshot) {
     // console.log(childSnapshot.val());
@@ -82,15 +85,21 @@ function setPage() {
     $("#schedtable").append(newRow);
   });
 };
-
 setPage();
 
+// REMOVING A SCHEDULE ROW FROM PAGE & DB
 $(document).on("click", ".delete", function () {
   keyref = $(this).attr("data-value");
   database.ref().child(keyref).remove();
-  setPage();
+  $(this).parent("tr").remove();
 });
 
-setInterval(function () {
-  setPage();
-}, 60000);
+// REFRESHING PAGE TO UPDATE TRAIN TIMES
+// setInterval(function () {
+//   // $("#schedtable").empty();
+//   setPage();
+// }, 3000);
+
+
+// INVOKING CURRENT TIME
+currentTime();
